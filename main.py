@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from database import create_db_and_tables
+from routes import item_routes
 
 app = FastAPI()
 
-@app.get("/")
-def read_roo():
-    return {"message": "Hello World My name is Youssouf"}
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(item_routes.router)
+
+# uvicorn main:app --reload
